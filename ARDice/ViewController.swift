@@ -50,7 +50,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     //    sceneView.scene.rootNode.addChildNode(node)
     
     sceneView.autoenablesDefaultLighting =  true
- 
+    
     
     
     
@@ -80,7 +80,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     // Pause the view's session
     sceneView.session.pause()
-
+    
   }
   
   
@@ -94,16 +94,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
       if let hitResult = results.first{
         
         // Create a new scene
-         let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
-         
-         if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true){
-           diceNode.position = SCNVector3(
+        let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
+        
+        if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true){
+          diceNode.position = SCNVector3(
             hitResult.worldTransform.columns.3.x,
-            hitResult.worldTransform.columns.3.y,
+            hitResult.worldTransform.columns.3.y + diceNode.boundingSphere.radius,
             hitResult.worldTransform.columns.3.z)
-           sceneView.scene.rootNode.addChildNode(diceNode)
-           
-         }
+          sceneView.scene.rootNode.addChildNode(diceNode)
+          
+          
+          let randomX = arc4random_uniform(4) + 1
+          
+          
+          
+        }
         
         
         
@@ -116,14 +121,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
       
       
       
-//      if !results.isEmpty{
-//        print("Touched the plane")
-//
-//      }else{
-//        print("Touched somewhere else")
-//
-//
-//      }
+      //      if !results.isEmpty{
+      //        print("Touched the plane")
+      //
+      //      }else{
+      //        print("Touched somewhere else")
+      //
+      //
+      //      }
       
     }
   }
