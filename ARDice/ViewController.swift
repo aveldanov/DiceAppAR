@@ -16,6 +16,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    self.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
+    //    self.sceneView.debugOptions = [ARSCNDebugOptions.showConstraints]
+    
     
     // Set the view's delegate
     sceneView.delegate = self
@@ -52,7 +55,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true){
       diceNode.position = SCNVector3(0, 0, -0.1)
       sceneView.scene.rootNode.addChildNode(diceNode)
-
+      
     }
     
     
@@ -68,6 +71,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     // Create a session configuration
     let configuration = ARWorldTrackingConfiguration()
     
+    
+    configuration.planeDetection = .horizontal
+    
+    
+    
     // Run the view's session
     sceneView.session.run(configuration)
   }
@@ -75,9 +83,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     
+    
     // Pause the view's session
     sceneView.session.pause()
+
   }
+  
+  
+  
+  func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+    if anchor is ARPlaneAnchor{
+      
+      let planeAnchor = anchor as! ARPlaneAnchor
+      
+//      print("Plane detected!")
+    }else{
+      print("Shit")
+      return
+    }
+  }
+  
+  
+  
+  
   
   // MARK: - ARSCNViewDelegate
   
