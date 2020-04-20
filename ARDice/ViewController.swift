@@ -95,6 +95,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     if anchor is ARPlaneAnchor{
       
       let planeAnchor = anchor as! ARPlaneAnchor
+      let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
+      
+      let planeNode = SCNNode()
+      
+      planeNode.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
+      
+      
+      
+      
       
 //      print("Plane detected!")
     }else{
