@@ -16,6 +16,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
     self.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
     //    self.sceneView.debugOptions = [ARSCNDebugOptions.showConstraints]
     
@@ -49,14 +50,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     //    sceneView.scene.rootNode.addChildNode(node)
     
     sceneView.autoenablesDefaultLighting =  true
-    // Create a new scene
-    let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
-    
-    if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true){
-      diceNode.position = SCNVector3(0, 0, -0.1)
-      sceneView.scene.rootNode.addChildNode(diceNode)
-      
-    }
+ 
     
     
     
@@ -90,6 +84,51 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   
   
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let touch = touches.first{
+      let touchLocation = touch.location(in: sceneView)
+      //converting to 3D coordinates on the plane
+      let results = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent)
+      
+      
+      if let hitResult = results.first{
+        
+        // Create a new scene
+         let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
+         
+         if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true){
+           diceNode.position = SCNVector3(
+            hitResult.worldTransform.columns.3.x,
+            hitResult.worldTransform.columns.3.y,
+            hitResult.worldTransform.columns.3.z)
+           sceneView.scene.rootNode.addChildNode(diceNode)
+           
+         }
+        
+        
+        
+        
+        
+        print(hitResult)
+      }
+      
+      
+      
+      
+      
+//      if !results.isEmpty{
+//        print("Touched the plane")
+//
+//      }else{
+//        print("Touched somewhere else")
+//
+//
+//      }
+      
+    }
+  }
+  
+  
   
   func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
     if anchor is ARPlaneAnchor{
@@ -100,12 +139,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
       let planeNode = SCNNode()
       
       planeNode.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
+      // see dev doc SCNPlane - the plane needs to be rotated 90 degrees\
+      // rotate over x axis
+      planeNode.transform = SCNMatrix4MakeRotation(-Float.pi/2, 1, 0, 0)
       
       
+      let gridMaterial = SCNMaterial()
+      gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/grid.png")
       
+      plane.materials = [gridMaterial]
       
+      planeNode.geometry = plane
       
-//      print("Plane detected!")
+      node.addChildNode(planeNode)
+      
+      print("Plane detected!")
     }else{
       print("Shit")
       return
